@@ -38,9 +38,10 @@ Provisioned: 2026-06-05
 | `NODE_ENV` | `production` |
 | `WEBSITE_NODE_DEFAULT_VERSION` | `~20` |
 | `AUTH_SECRET` | ⚠️ **Not yet set** — must be added |
-| `NEXT_PUBLIC_AZURE_B2C_TENANT_NAME` | ⚠️ **Not yet set** — requires Entra app registration |
-| `NEXT_PUBLIC_AZURE_B2C_CLIENT_ID` | ⚠️ **Not yet set** — requires Entra app registration |
-| `NEXT_PUBLIC_AZURE_B2C_SIGNUP_SIGNIN_POLICY` | ⚠️ **Not yet set** — requires Entra user flow |
+| `AUTH_GOOGLE_ID` | ⚠️ **Not yet set** — requires Google OAuth app |
+| `AUTH_GOOGLE_SECRET` | ⚠️ **Not yet set** — requires Google OAuth app |
+| `AUTH_FACEBOOK_ID` | ⚠️ **Not yet set** — requires Facebook OAuth app |
+| `AUTH_FACEBOOK_SECRET` | ⚠️ **Not yet set** — requires Facebook OAuth app |
 
 ## Remaining Steps
 
@@ -66,13 +67,19 @@ $env:DATABASE_URL = "postgresql://fivekadmin:<password>@saturdaymorning-db.postg
 pnpm exec prisma migrate deploy
 ```
 
-### 3. Register app in Entra External ID (B2C)
+### 3. Create Google and Facebook OAuth apps
 
-1. Go to the [Azure Portal](https://portal.azure.com) signed into tenant `a7a18fe7-908e-4061-92d3-6a699da041fd`
-2. Navigate to: **Entra ID → App registrations → New registration**
-3. Add redirect URI: `https://saturdaymorning.azurewebsites.net/api/auth/callback/azure-ad-b2c`
-4. Create a user flow named: `B2C_1_signup_signin`
-5. Note the **Tenant name** (e.g. `contoso.onmicrosoft.com` → use `contoso`) and **Client ID**
+**Google:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com) → **APIs & Services → Credentials**
+2. Create an **OAuth 2.0 Client ID** (Web application)
+3. Add authorised redirect URI: `https://saturdaymorning.azurewebsites.net/api/auth/callback/google`
+4. Note the **Client ID** and **Client Secret**
+
+**Facebook:**
+1. Go to [Meta for Developers](https://developers.facebook.com) → **My Apps → Create App**
+2. Add the **Facebook Login** product
+3. Add Valid OAuth Redirect URI: `https://saturdaymorning.azurewebsites.net/api/auth/callback/facebook`
+4. Note the **App ID** and **App Secret**
 
 ### 4. Add GitHub Secrets
 
@@ -84,9 +91,10 @@ Go to the GitHub repo → **Settings → Secrets and variables → Actions** and
 | `AZURE_WEBAPP_PUBLISH_PROFILE` | Download from portal: App Service → **Get publish profile** |
 | `DATABASE_URL` | `postgresql://fivekadmin:<password>@saturdaymorning-db.postgres.database.azure.com:5432/iteration1?sslmode=require` |
 | `NEXT_PUBLIC_CDN_URL` | `https://saturdaymorning-assets-dya4gth9dnc0begj.z03.azurefd.net` |
-| `NEXT_PUBLIC_AZURE_B2C_TENANT_NAME` | From step 3 |
-| `NEXT_PUBLIC_AZURE_B2C_CLIENT_ID` | From step 3 |
-| `NEXT_PUBLIC_AZURE_B2C_SIGNUP_SIGNIN_POLICY` | `B2C_1_signup_signin` |
+| `AUTH_GOOGLE_ID` | From step 3 (Google Client ID) |
+| `AUTH_GOOGLE_SECRET` | From step 3 (Google Client Secret) |
+| `AUTH_FACEBOOK_ID` | From step 3 (Facebook App ID) |
+| `AUTH_FACEBOOK_SECRET` | From step 3 (Facebook App Secret) |
 
 ### 5. Deploy
 
